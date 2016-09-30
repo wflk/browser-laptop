@@ -233,6 +233,8 @@ module.exports.cleanAppData = (data, isShutdown) => {
   data.temporarySiteSettings = {}
   // Delete Flash state since this is checked on startup
   delete data.flashInitialized
+  // Delete Recovery status on shut down
+  delete data.ui.about.preferences.recoverySucceeded
   // We used to store a huge list of IDs but we didn't use them.
   // Get rid of them here.
   delete data.windows
