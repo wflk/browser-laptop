@@ -81,6 +81,7 @@ const contentSettings = require('../js/state/contentSettings')
 const privacy = require('../js/state/privacy')
 const basicAuth = require('./browser/basicAuth')
 const async = require('async')
+const tabs = require('./browser/tabs')
 
 // temporary fix for #4517, #4518 and #4472
 app.commandLine.appendSwitch('enable-use-zoom-for-dsf', 'false')
@@ -410,6 +411,7 @@ app.on('ready', () => {
     Menu.init(initialState, null)
     return loadedPerWindowState
   }).then((loadedPerWindowState) => {
+    tabs.init()
     basicAuth.init()
     contentSettings.init()
     privacy.init()
