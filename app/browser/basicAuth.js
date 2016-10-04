@@ -22,7 +22,7 @@ const basicAuth = {
       webContents.on('crashed', () => {
         cleanupAuthCallback(tabId)
       })
-      process.nextTick(() => {
+      setImmediate(() => {
         appActions.setLoginRequiredDetail(tabId, {
           request,
           authInfo

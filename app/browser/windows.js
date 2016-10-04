@@ -12,7 +12,7 @@ let currentWindows = {}
 
 const cleanupWindow = (windowId) => {
   delete currentWindows[windowId]
-  process.nextTick(() => {
+  setImmediate(() => {
     appActions.windowClosed(windowId)
   })
 }
@@ -48,7 +48,7 @@ const getWindowValue = (windowId) => {
 const updateWindow = (windowId) => {
   let windowValue = getWindowValue(windowId)
   if (windowValue) {
-    process.nextTick(() => {
+    setImmediate(() => {
       appActions.windowUpdated(windowValue)
     })
   }
@@ -64,7 +64,7 @@ const api = {
         windowId = win.id
         currentWindows[windowId] = win
         let windowValue = getWindowValue(windowId)
-        process.nextTick(() => {
+        setImmediate(() => {
           appActions.windowCreated(windowValue)
         })
       })

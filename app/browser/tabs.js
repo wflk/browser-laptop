@@ -10,7 +10,7 @@ let activeTab = null
 
 const cleanupWebContents = (tabId) => {
   delete currentWebContents[tabId]
-  process.nextTick(() => {
+  setImmediate(() => {
     appActions.tabClosed(tabId)
   })
 }
@@ -114,7 +114,7 @@ const createInternal = (createProperties, guest, cb = null) => {
 const updateTab = (tabId) => {
   let tabValue = getTabValue(tabId)
   if (tabValue) {
-    process.nextTick(() => {
+    setImmediate(() => {
       appActions.tabUpdated(tabValue)
     })
   }
@@ -191,7 +191,7 @@ const api = {
         if (!tabValue.get('uuid')) {
           tabValue = tabValue.set('uuid', uuidv4())
         }
-        process.nextTick(() => {
+        setImmediate(() => {
           appActions.tabCreated(tabValue)
         })
       }
