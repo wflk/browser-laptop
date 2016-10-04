@@ -33,6 +33,46 @@ Dispatches an event to the main process to create a new window.
 
 
 
+### newTab(createProperties) 
+
+A new tab has been requested
+
+**Parameters**
+
+**createProperties**: `Object`, windowId, url, active, openerTabId
+
+
+
+### tabCreated(tabValue) 
+
+A new tab has been created
+
+**Parameters**
+
+**tabValue**: `Object`, A new tab has been created
+
+
+
+### tabUpdated(tabValue) 
+
+A tab has been updated
+
+**Parameters**
+
+**tabValue**: `Object`, A tab has been updated
+
+
+
+### tabClosed(tabId) 
+
+Closes an open tab
+
+**Parameters**
+
+**tabId**: `number`, Closes an open tab
+
+
+
 ### addSite(siteDetail, tag, originalSiteDetail, destinationIsParent) 
 
 Adds a site to the site list

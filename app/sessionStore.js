@@ -24,7 +24,9 @@ const {tabFromFrame} = require('../js/state/frameStateUtil')
 const siteUtil = require('../js/state/siteUtil')
 const sessionStorageVersion = 1
 const filtering = require('./filtering')
-// const tabState = require('./common/state/tabState')
+const { makeImmutable } = require('./common/state/immutableUtil')
+const tabState = require('./common/state/tabState')
+const windowState = require('./common/state/windowState')
 
 const getSetting = require('../js/settings').getSetting
 const promisify = require('../js/lib/promisify')
@@ -64,7 +66,7 @@ module.exports.saveAppState = (payload, isShutdown) => {
     }
 
     try {
-      module.exports.cleanAppData(payload, isShutdown)
+      payload = module.exports.cleanAppData(payload, isShutdown)
       payload.cleanedOnShutdown = isShutdown
     } catch (e) {
       payload.cleanedOnShutdown = false
@@ -231,6 +233,10 @@ module.exports.cleanPerWindowData = (perWindowData, isShutdown) => {
  * WARNING: getPrefs is only available in this function when isShutdown is true
  */
 module.exports.cleanAppData = (data, isShutdown) => {
+  // make a copy
+  // TODO(bridiver) use immutable
+  data = makeImmutable(data).toJS()
+
   if (data.settings) {
     // useragent value gets recalculated on restart
     data.settings[settings.USERAGENT] = undefined
@@ -241,9 +247,7 @@ module.exports.cleanAppData = (data, isShutdown) => {
   data.temporarySiteSettings = {}
   // Delete Flash state since this is checked on startup
   delete data.flashInitialized
-  // We used to store a huge list of IDs but we didn't use them.
-  // Get rid of them here.
-  delete data.windows
+
   if (data.perWindowState) {
     data.perWindowState.forEach((perWindowState) =>
       module.exports.cleanPerWindowData(perWindowState, isShutdown))
@@ -292,16 +296,14 @@ module.exports.cleanAppData = (data, isShutdown) => {
       })
     }
   }
-  // all data in tabs is transient while we make the transition from window to app state
-  delete data.tabs
-  // if (data.tabs) {
-  //   data.tabs = data.tabs.map((tab) => tabState.getPersistentTabState(tab).toJS())
-  // }
+  data = tabState.getPersistentState(data).toJS()
+  data = windowState.getPersistentState(data).toJS()
   if (data.extensions) {
     Object.keys(data.extensions).forEach((extensionId) => {
       delete data.extensions[extensionId].tabs
     })
   }
+  return data
 }
 
 /**
@@ -386,7 +388,7 @@ module.exports.loadAppState = () => {
       }
       // Clean app data here if it wasn't cleared on shutdown
       if (data.cleanedOnShutdown !== true || data.lastAppVersion !== app.getVersion()) {
-        module.exports.cleanAppData(data, false)
+        data = module.exports.cleanAppData(data, false)
       }
       data = Object.assign(module.exports.defaultAppState(), data)
       data.cleanedOnShutdown = false
@@ -408,7 +410,7 @@ module.exports.loadAppState = () => {
     } catch (e) {
       // TODO: Session state is corrupted, maybe we should backup this
       // corrupted value for people to report into support.
-      console.log('could not parse data: ', data)
+      console.log('could not parse data: ', data, e)
       data = exports.defaultAppState()
     }
     locale.init(data.settings[settings.LANGUAGE]).then((locale) => {
@@ -426,6 +428,7 @@ module.exports.defaultAppState = () => {
     firstRunTimestamp: new Date().getTime(),
     sites: [],
     tabs: [],
+    windows: [],
     extensions: {},
     visits: [],
     settings: {},

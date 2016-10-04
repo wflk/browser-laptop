@@ -37,10 +37,75 @@ const appActions = {
     })
   },
 
-  closeWindow: function (appWindowId) {
+  closeWindow: function (windowId) {
     AppDispatcher.dispatch({
       actionType: AppConstants.APP_CLOSE_WINDOW,
-      appWindowId
+      windowId
+    })
+  },
+
+  windowClosed: function (windowId) {
+    AppDispatcher.dispatch({
+      actionType: AppConstants.APP_WINDOW_CLOSED,
+      windowId
+    })
+  },
+
+  windowCreated: function (windowValue) {
+    AppDispatcher.dispatch({
+      actionType: AppConstants.APP_WINDOW_CREATED,
+      windowValue
+    })
+  },
+
+  windowUpdated: function (windowValue) {
+    AppDispatcher.dispatch({
+      actionType: AppConstants.APP_WINDOW_UPDATED,
+      windowValue
+    })
+  },
+
+  /**
+   * A new tab has been requested
+   * @param {Object} createProperties - windowId, url, active, openerTabId
+   */
+  newTab: function (createProperties) {
+    AppDispatcher.dispatch({
+      actionType: AppConstants.APP_NEW_TAB,
+      createProperties
+    })
+  },
+
+  /**
+   * A new tab has been created
+   * @param {Object} tabValue
+   */
+  tabCreated: function (tabValue) {
+    AppDispatcher.dispatch({
+      actionType: AppConstants.APP_TAB_CREATED,
+      tabValue
+    })
+  },
+
+  /**
+   * A tab has been updated
+   * @param {Object} tabValue
+   */
+  tabUpdated: function (tabValue) {
+    AppDispatcher.dispatch({
+      actionType: AppConstants.APP_TAB_UPDATED,
+      tabValue
+    })
+  },
+
+  /**
+   * Closes an open tab
+   * @param {number} tabId
+   */
+  tabClosed: function (tabId) {
+    AppDispatcher.dispatch({
+      actionType: AppConstants.APP_TAB_CLOSED,
+      tabId
     })
   },
 
@@ -466,14 +531,14 @@ const appActions = {
   },
 
   /**
-   * Dispatches a message when appWindowId loses focus
+   * Dispatches a message when windowId loses focus
    *
-   * @param {Number} appWindowId - the unique id of the window
+   * @param {Number} windowId - the unique id of the window
    */
-  windowBlurred: function (appWindowId) {
+  windowBlurred: function (windowId) {
     AppDispatcher.dispatch({
       actionType: AppConstants.APP_WINDOW_BLURRED,
-      appWindowId: appWindowId
+      windowId: windowId
     })
   },
 
@@ -504,6 +569,12 @@ const appActions = {
   networkDisconnected: function () {
     AppDispatcher.dispatch({
       actionType: AppConstants.APP_NETWORK_DISCONNECTED
+    })
+  },
+
+  shuttingDown: function () {
+    AppDispatcher.dispatch({
+      actionType: AppConstants.APP_SHUTTING_DOWN
     })
   }
 }

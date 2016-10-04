@@ -6,35 +6,38 @@ const tabState = require('./tabState')
 const { makeImmutable } = require('./immutableUtil')
 
 const loginRequiredDetail = 'loginRequiredDetail'
-tabState.addTransientFields([loginRequiredDetail])
 
 const basicAuthState = {
-  setLoginRequiredDetail: (appState, tabId, detail) => {
-    appState = makeImmutable(appState)
-    detail = makeImmutable(detail)
-    let tab = tabState.getOrCreateByTabId(appState, tabId)
+  setLoginRequiredDetail: (state, action) => {
+    state = makeImmutable(state)
+    action = makeImmutable(action)
+    let tabId = action.get('tabId')
+    let detail = action.get('detail')
+    let tabValue = tabState.getByTabId(state, tabId)
     if (!detail || detail.size === 0) {
-      tab = tab.delete(loginRequiredDetail)
+      tabValue = tabValue.delete(loginRequiredDetail)
     } else {
-      tab = tab.set(loginRequiredDetail, detail)
+      tabValue = tabValue.set(loginRequiredDetail, detail)
     }
-    return tabState.updateTab(appState, tabId, tab)
+    return tabState.updateTab(state, tabValue)
   },
 
-  getLoginRequiredDetail: (appState, tabId) => {
-    appState = makeImmutable(appState)
-    let tab = tabState.getByTabId(appState, tabId)
+  getLoginRequiredDetail: (state, tabId) => {
+    state = makeImmutable(state)
+    let tab = tabState.getByTabId(state, tabId)
     return tab && tab.get(loginRequiredDetail)
   },
 
-  setLoginResponseDetail: (appState, tabId, detail) => {
-    appState = makeImmutable(appState)
-    let tab = tabState.getByTabId(appState, tabId)
+  setLoginResponseDetail: (state, action) => {
+    state = makeImmutable(state)
+    action = makeImmutable(action)
+    let tabId = action.get('tabId')
+    let tab = tabState.getByTabId(state, tabId)
     if (!tab) {
-      return appState
+      return state
     }
     tab = tab.delete(loginRequiredDetail)
-    return tabState.updateTab(appState, tabId, tab)
+    return tabState.updateTab(state, tabId, tab)
   }
 }
 
