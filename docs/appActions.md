@@ -443,13 +443,13 @@ Remove credit card data
 
 
 
-### windowBlurred(appWindowId) 
+### windowBlurred(windowId) 
 
-Dispatches a message when appWindowId loses focus
+Dispatches a message when windowId loses focus
 
 **Parameters**
 
-**appWindowId**: `Number`, the unique id of the window
+**windowId**: `Number`, the unique id of the window
 
 
 

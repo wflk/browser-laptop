@@ -10,6 +10,27 @@ AppStore
 ```javascript
 {
   firstRunTimestamp: integer,
+  tabs: [{
+    url: string,
+    index: number,  // the position of the tab in the window
+    windowId: number,  // the windowId that contains the tab (session-only)
+    windowUUID: string,  // the permanent identifier for the window (cross-session)
+    active: boolean,  // whether the tab is selected
+    audible: boolean,  // is audio playing (muted or not)
+    muted: boolean,  // is the tab muted
+    title: string,
+    favIconUrl: string
+  }],
+  windows: [{
+    id: number,  // the electron id for the window (session-only)
+    focused: boolean,
+    top: number,
+    left: number,
+    width: number,
+    height: number,
+    type: string,  // "normal", "popup", or "devtools"
+    state: string  // "normal", "minimized", "maximized", or "fullscreen"
+  }],
   extensions: {
     [id]: { // the unique id of the extension
       id: string,
