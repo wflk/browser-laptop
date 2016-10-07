@@ -136,6 +136,61 @@ describe('bookmark tests', function () {
         })
       })
     })
+
+    describe('custom title for pages without title', function () {
+      Brave.beforeAll(this)
+
+      let customBookmarkTitle = 'testCustomtitle'
+
+      before(function * () {
+        this.page1Url = Brave.server.url('page_no_title.html')
+
+        yield setup(this.app.client)
+
+        yield this.app.client
+          .waitForUrl(Brave.newTabUrl)
+          .loadUrl(this.page1Url)
+          .windowParentByUrl(this.page1Url)
+          .moveToObject(navigator)
+          .waitForExist(navigatorNotBookmarked)
+          .moveToObject(navigator)
+          .click(navigatorNotBookmarked)
+          .waitForVisible(saveButton + ':not([disabled]')
+      })
+
+      it('inputs a custom title', function * () {
+        yield this.app.client
+          .waitForExist('#bookmarkName input')
+          .setValue('#bookmarkName input', customBookmarkTitle)
+          .getValue('#bookmarkName input').should.eventually.be.equal(customBookmarkTitle)
+      })
+
+      describe('saved with a custom title', function () {
+        before(function * () {
+          yield this.app.client
+            .click(saveButton)
+        })
+        it('displays custom title', function * () {
+          yield this.app.client
+            .waitUntil(function () {
+              return this.getText('.bookmarkText')
+                .then((val) => val === customBookmarkTitle)
+            })
+        })
+        describe('and then removed', function () {
+          before(function * () {
+            yield this.app.client
+              .click(navigatorNotBookmarked)
+              .waitForExist(deleteButton)
+              .click(deleteButton)
+          })
+          it('removes the bookmark from the toolbar', function * () {
+            yield this.app.client
+              .waitForExist('.bookmarkText', 1000, true)
+          })
+        })
+      })
+    })
   })
 
   describe('menu behavior', function () {
